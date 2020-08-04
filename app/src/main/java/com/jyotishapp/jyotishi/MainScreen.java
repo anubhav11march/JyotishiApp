@@ -54,6 +54,7 @@ import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
 
 public class MainScreen extends BaseClass {
 
+
     private static final int PERMISSION_REQ_ID = 22;
     BoomMenuButton bmb;
     FirebaseAuth mAuth;
