@@ -32,6 +32,7 @@ import com.nightonke.boommenu.BoomMenuButton
 import com.onesignal.OneSignal
 import io.github.yavski.fabspeeddial.FabSpeedDial
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter
+import kotlinx.android.synthetic.main.activity_main_screen.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -59,6 +60,24 @@ class MainScreen : BaseClass() {
             Toast.makeText(this@MainScreen, getString(R.string.login_again), Toast.LENGTH_SHORT).show()
             return
         }
+
+        FirebaseDatabase.getInstance().getReference("StreamStatus")
+                .addValueEventListener(object : ValueEventListener{
+                    override fun onCancelled(p0: DatabaseError) {
+
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val isStarted = snapshot.getValue(String::class.java)
+                        joinStream.visibility = if(isStarted.equals("on"))
+                            View.VISIBLE
+                        else
+                            View.GONE
+                    }
+                })
+
+
+
         uid = MAuth.currentUser!!.uid
         for (i in 0..1) {
             checkSelfPermission(REQUESTED_PERMISSIONS[1], PERMISSION_REQ_ID)
@@ -286,6 +305,11 @@ class MainScreen : BaseClass() {
     fun exploreOptionsClicked(view: View?) {
         fabsd!!.closeMenu()
         bmb!!.boom()
+    }
+
+    fun joinLiveStreamClicked(view: View?) {
+        val intent = Intent(this,LiveStreamActivity::class.java)
+        startActivity(intent)
     }
 
     fun appointmentsClicked(view: View?){

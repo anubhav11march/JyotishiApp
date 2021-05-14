@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LiveStreamActivity"
+    android:background="@color/black">
+
+    <FrameLayout
+        android:id="@+id/local_container_test"
+        android:layout_width="0dp"
+        android:layout_height="180dp"
+        android:background="@color/colorGrey"
+        app:layout_constraintStart_toEndOf="@id/guide_fourth"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
+
+    <RelativeLayout
+        android:id="@+id/admin"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guide_fourth"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/admin_bottom2"
+        android:layout_marginTop="@dimen/dimen_20dp"
+        android:layout_marginStart="@dimen/dimen_10dp"
+        />
+
+    <View
+        android:id="@+id/admin_shadow"
+        android:layout_width="@dimen/dimen_0dp"
+        android:layout_height="@dimen/dimen_32dp"
+        app:layout_constraintStart_toStartOf="@id/admin"
+        app:layout_constraintEnd_toEndOf="@id/admin"
+        app:layout_constraintBottom_toBottomOf="@id/admin"
+        android:background="@drawable/shadow_gradient"/>
+
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="0dp"
+        android:text="Admin"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/admin_shadow"
+        app:layout_constraintTop_toTopOf="@id/admin_shadow"
+        app:layout_constraintBottom_toBottomOf="@id/admin_shadow"
+        android:autoSizeTextType="uniform"
+        android:layout_marginStart="@dimen/dimen_20dp"/>
+
+    <TextView
+        android:id="@+id/local_label_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textColor="@color/white"
+        android:text="You"
+        android:textStyle="bold"
+        android:elevation="4dp"
+        app:layout_constraintStart_toStartOf="@id/local_container_test"
+        app:layout_constraintBottom_toBottomOf="@id/local_container_test"
+        android:paddingBottom="8dp"
+        android:paddingStart="12dp"
+        />
+
+    <View
+        android:id="@+id/shadow"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/shadow_gradient"
+        android:elevation="1dp"
+        app:layout_constraintStart_toStartOf="@id/local_container_test"
+        app:layout_constraintEnd_toEndOf="@id/local_container_test"
+        app:layout_constraintBottom_toBottomOf="@id/local_container_test"
+        app:layout_constraintTop_toTopOf="@id/local_label_test"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="@dimen/dimen_22sp"
+        android:text="Other Participant List"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/recyclerview_test"
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="@dimen/dimen_6dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_test"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/admin_bottom"
+        app:layout_constraintBottom_toTopOf="@id/btn_switch_camera_test"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.55"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_third"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_fourth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/admin_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/admin_bottom2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.45"/>
+
+    <Button
+        android:id="@+id/sendGift"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send a Gift to Jyotish Ji"
+        android:textAllCaps="false"
+        android:padding="@dimen/dimen_4dp"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/dimen_8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/admin" />
+
+    <ImageView
+        android:id="@+id/btn_mute_test"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="24dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_mic_off"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guide_first"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/btn_call_test"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="24dp"
+        android:scaleType="centerCrop"
+        app:tint="@android:color/holo_red_dark"
+        android:src="@drawable/ic_call"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guide_second"
+        app:layout_constraintStart_toStartOf="@id/guide_first" />
+
+    <ImageView
+        android:id="@+id/btn_toggle_camera_test"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="24dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_cam"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guide_third"
+        app:layout_constraintStart_toEndOf="@id/guide_second" />
+
+    <ImageView
+        android:id="@+id/btn_switch_camera_test"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="24dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_flip_camera"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guide_third" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

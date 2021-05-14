@@ -112,6 +112,25 @@
         />
 
         <Button
+            android:id="@+id/joinStream"
+            android:background="@drawable/rounded_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:layout_marginEnd="70dp"
+            android:layout_marginBottom="21dp"
+            android:onClick="joinLiveStreamClicked"
+            android:textColor="@android:color/white"
+            android:text="Join livestream"
+            app:cornerRadius="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/exploreOptions"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            />
+
+        <Button
             android:id="@+id/exploreOptions"
             android:background="@drawable/rounded_button"
             android:layout_width="match_parent"

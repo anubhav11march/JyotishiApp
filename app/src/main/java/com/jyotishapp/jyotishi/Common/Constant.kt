@@ -7,4 +7,10 @@ object Constant {
                                  "5 pm","5:30 pm","6 pm",
                                  "6:30 pm","7 pm","7:30 pm"
                                  )
+
+    const val BROADCAST_NOTIFICATION_MESSAGE = "Jyotish ji is streaming live!"
+    const val ADMIN_ID = "cAHmmp4bzyS9wPvm4QU2q6qthII2"
+
+    private const val MAX_RANDOM_USER_ID_POSSIBLE = 101000
+    const val ADMIN_UNIQUE_AGORA_ID = MAX_RANDOM_USER_ID_POSSIBLE.times(2)
 }

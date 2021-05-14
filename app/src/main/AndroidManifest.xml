@@ -21,7 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".OnBoardActivity"></activity>
+        <activity
+            android:name=".LiveStreamActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".OnBoardActivity" />
         <activity android:name=".AppointHostActivity" />
         <activity
             android:name=".VideoLogsActivity"
