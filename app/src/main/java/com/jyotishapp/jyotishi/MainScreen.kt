@@ -25,15 +25,20 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.jyotishapp.jyotishi.MainScreenViewModel.StreamStatus
+import com.jyotishapp.jyotishi.MainScreenViewModel.StreamStatus.*
 import com.nightonke.boommenu.BoomButtons.TextInsideCircleButton
 import com.nightonke.boommenu.BoomMenuButton
 import com.onesignal.OneSignal
 import io.github.yavski.fabspeeddial.FabSpeedDial
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter
 import kotlinx.android.synthetic.main.activity_main_screen.*
+import kotlinx.coroutines.flow.collect
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,6 +56,7 @@ class MainScreen : BaseClass() {
     var uid: String? = null
 
     private val liveStreamViewModel by viewModels<LiveStreamViewModel>()
+    private val mainScreenViewModel by viewModels<MainScreenViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         loadLocale()
@@ -88,7 +94,7 @@ class MainScreen : BaseClass() {
 
                     else {
 
-                        joinStream.visibility = View.GONE
+                        mainScreenViewModel.setStreamStatus(NotStarted(null))
                     }
                 }
             })
@@ -263,6 +269,40 @@ class MainScreen : BaseClass() {
         rotateAnimation.duration = 2000
         rotateAnimation.repeatCount = Animation.INFINITE
         imageBorder!!.animation = rotateAnimation
+
+        joinStream.setOnClickListener {
+
+            val job = lifecycleScope.launchWhenCreated {
+
+                mainScreenViewModel.streamStatus.collect {  status ->
+
+                    when(status) {
+
+                        is None -> Unit
+
+                        is Started -> joinLiveStreamClicked()
+
+                        is StillInStream -> {
+
+                            status.message?.let {  message ->
+
+                                Snackbar.make(joinStream,message,Snackbar.LENGTH_LONG).show()
+                            }
+                        }
+
+                        is NotStarted -> {
+
+                            status.message?.let {  message ->
+
+                                Snackbar.make(joinStream,message,Snackbar.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }
+            }
+
+            job.cancel()
+        }
     }
 
     private val listener = object : ValueEventListener {
@@ -273,11 +313,12 @@ class MainScreen : BaseClass() {
 
             isInStream?.let { isStillInStream ->
 
-                joinStream.visibility =
-                    if (isStillInStream)
-                        View.GONE
-                    else
-                        View.VISIBLE
+                if (isStillInStream)
+
+                    mainScreenViewModel.setStreamStatus(StillInStream(null))
+                else
+
+                    mainScreenViewModel.setStreamStatus(Started)
             }
         }
 
@@ -362,7 +403,7 @@ class MainScreen : BaseClass() {
         bmb!!.boom()
     }
 
-    fun joinLiveStreamClicked(view: View?) {
+    fun joinLiveStreamClicked() {
         val intent = Intent(this, LiveStreamActivity::class.java)
         startActivity(intent)
     }

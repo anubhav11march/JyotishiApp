@@ -104,6 +104,9 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
+        <meta-data android:name="com.razorpay.ApiKey"
+            android:value="rzp_live_sI9wUfVQt3nB39"/>
     </application>
 
 </manifest>

@@ -7,5 +7,6 @@ data class ChatUser(
     val username: String = "",
     val message: String = "",
     val profileUrl: String = DEFAULT_USER_URL,
-    val time: String = ""
+    val time: String = "",
+    val isGift: Boolean = false
 )

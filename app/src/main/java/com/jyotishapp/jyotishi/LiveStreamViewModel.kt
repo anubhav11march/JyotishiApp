@@ -34,6 +34,9 @@ class LiveStreamViewModel : ViewModel() {
     private val _recyclerViewStatus: MutableStateFlow<RecyclerViewState> = MutableStateFlow(Initial)
     val recyclerViewStatus: StateFlow<RecyclerViewState> get() = _recyclerViewStatus
 
+    private val _giftAmount: MutableLiveData<Int> = MutableLiveData()
+    val giftAmount: LiveData<Int> get() = _giftAmount
+
     private var dbRef: DatabaseReference? = null
     private var dbRefKey: String? = null
 
@@ -86,6 +89,11 @@ class LiveStreamViewModel : ViewModel() {
                         }
                     })
         }
+    }
+
+    fun setGiftAmount(amount: Int) {
+
+        _giftAmount.value = amount
     }
 
     fun markChatsAsStopped() {

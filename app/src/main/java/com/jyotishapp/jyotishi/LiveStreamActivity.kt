@@ -3,7 +3,6 @@ package com.jyotishapp.jyotishi
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,15 +21,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.jyotishapp.jyotishi.Adapter.RemoteViewAdapterTest
 import com.jyotishapp.jyotishi.Adapter.StreamActiveUsersAdapter
 import com.jyotishapp.jyotishi.Adapter.StreamChatAdapter
-import com.jyotishapp.jyotishi.Adapter.UsersAdapter
 import com.jyotishapp.jyotishi.Common.Constant.ADMIN_ID
 import com.jyotishapp.jyotishi.Common.Constant.ADMIN_UNIQUE_AGORA_ID
 import com.jyotishapp.jyotishi.Common.Constant.DEFAULT_USER_URL
@@ -39,6 +37,10 @@ import com.jyotishapp.jyotishi.LiveStreamViewModel.RecyclerViewState.StopScroll
 import com.jyotishapp.jyotishi.Models.ActiveUser
 import com.jyotishapp.jyotishi.Models.ChatUser
 import com.jyotishapp.jyotishi.Models.UserStreamMetaData
+import com.razorpay.Checkout
+import com.razorpay.PaymentData
+import com.razorpay.PaymentResultListener
+import com.razorpay.PaymentResultWithDataListener
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.video.VideoCanvas
@@ -48,11 +50,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.locks.ReentrantLock
 
-class LiveStreamActivity : AppCompatActivity(), PaymentDialog.DialogListener {
+
+class LiveStreamActivity : AppCompatActivity(), PaymentDialog.DialogListener, PaymentResultWithDataListener{
 
     private var mRtcEngine: RtcEngine? = null
     private lateinit var iRtcEngineEventHandler: IRtcEngineEventHandler
@@ -79,27 +82,53 @@ class LiveStreamActivity : AppCompatActivity(), PaymentDialog.DialogListener {
 
                 if(amount > 0) {
 
-                    val uri = Uri.Builder()
-                        .scheme("upi")
-                        .authority("pay")
-                        .appendQueryParameter("pa", upiID)
-                        .appendQueryParameter("pn", "Jyotish Ji")
-                        //.appendQueryParameter("mc", "your-merchant-code")
-                        //.appendQueryParameter("tr", "your-transaction-ref-id")
-                        .appendQueryParameter("tn", transactionNote)
-                        .appendQueryParameter("am", "$amount")
-                        .appendQueryParameter("cu", "INR")
-                        //.appendQueryParameter("url", "your-transaction-url")
-                        .build()
+                    liveStreamViewModel.setGiftAmount(amount)
+                    val checkout = Checkout()
 
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = uri
-                    intent.setPackage(GOOGLE_PAY_PACKAGE_NAME)
                     try {
-                        startActivityForResult(intent, GOOGLE_PAY_REQUEST_CODE)
-                    } catch (e: java.lang.Exception) {
-                        Toast.makeText(this@LiveStreamActivity, "Google Pay is not installed", Toast.LENGTH_LONG).show()
+
+                        val options = JSONObject()
+                        options.put("name", "Jyotish Ji")
+                        options.put("description", "Gift")
+
+                        options.put("image", "https://rzp-mobile.s3.amazonaws.com/images/rzp.png")
+                        options.put("currency", "INR")
+
+                        // amount is in paise so please multiple it by 100
+
+                        var total = amount
+                        total *= 100
+                        options.put("amount", "$total")
+                        val preFill = JSONObject()
+                        preFill.put("email", "accounts@kyloapps.com")
+                        preFill.put("contact", "8826359249")
+                        options.put("prefill", preFill)
+                        checkout.open(this@LiveStreamActivity, options)
+                    } catch (e: Exception) {
+                        Toast.makeText(this@LiveStreamActivity,e.message.toString(),Toast.LENGTH_SHORT).show()
                     }
+
+//                    val uri = Uri.Builder()
+//                        .scheme("upi")
+//                        .authority("pay")
+//                        .appendQueryParameter("pa", upiID)
+//                        .appendQueryParameter("pn", "Jyotish Ji")
+//                        //.appendQueryParameter("mc", "your-merchant-code")
+//                        //.appendQueryParameter("tr", "your-transaction-ref-id")
+//                        .appendQueryParameter("tn", transactionNote)
+//                        .appendQueryParameter("am", "$amount")
+//                        .appendQueryParameter("cu", "INR")
+//                        //.appendQueryParameter("url", "your-transaction-url")
+//                        .build()
+//
+//                    val intent = Intent(Intent.ACTION_VIEW)
+//                    intent.data = uri
+//                    intent.setPackage(GOOGLE_PAY_PACKAGE_NAME)
+//                    try {
+//                        startActivityForResult(intent, GOOGLE_PAY_REQUEST_CODE)
+//                    } catch (e: java.lang.Exception) {
+//                        Toast.makeText(this@LiveStreamActivity, "Google Pay is not installed", Toast.LENGTH_LONG).show()
+//                    }
                 } else {
 
                     Toast.makeText(this@LiveStreamActivity,"Enter amount",Toast.LENGTH_SHORT).show()
@@ -108,6 +137,45 @@ class LiveStreamActivity : AppCompatActivity(), PaymentDialog.DialogListener {
         }
 
         job.cancel()
+    }
+
+    override fun onPaymentSuccess(p0: String?, p1: PaymentData?) {
+
+//        try {
+//            amount = p1?.data?.get("amount") as Int
+//        } catch (e: Exception){
+//            Toast.makeText(this,e.message.toString(),Toast.LENGTH_SHORT).show()
+//        }
+
+        val data = liveStreamViewModel.currentUserName.asLiveData()
+
+        data.observe(this, Observer { userName ->
+
+            liveStreamViewModel.giftAmount.observe(this, Observer { giftAmount ->
+
+                val date = Date(System.currentTimeMillis())
+                val sdf = SimpleDateFormat("HH:mm")
+                val time = sdf.format(date)
+
+                val amount = giftAmount ?: -1
+
+                val chatUser = ChatUser(
+                    userName,
+                    "$userName sent ₹ $amount as a gift to Jyotish Ji!",
+                    DEFAULT_USER_URL,
+                    time,
+                    true
+                )
+
+                FirebaseDatabase.getInstance().getReference("StreamChat")
+                    .push()
+                    .setValue(chatUser)
+            })
+        })
+    }
+
+    override fun onPaymentError(p0: Int, p1: String?, p2: PaymentData?) {
+        Toast.makeText(this,"Payment failed or cancelled!",Toast.LENGTH_LONG).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -346,7 +414,8 @@ class LiveStreamActivity : AppCompatActivity(), PaymentDialog.DialogListener {
                             userName,
                             message,
                             DEFAULT_USER_URL,
-                            time
+                            time,
+                            false
                         )
 
                         chat.setText("")
