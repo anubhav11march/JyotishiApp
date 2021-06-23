@@ -4,11 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.jyotishapp.jyotishi.Common.Constant;
 import com.onesignal.OSNotificationAction;
 import com.onesignal.OSNotificationOpenResult;
 import com.onesignal.OneSignal;
 
 import org.json.JSONObject;
+
+import static com.jyotishapp.jyotishi.Common.Constant.*;
+import static com.jyotishapp.jyotishi.Common.Constant.BROADCAST_NOTIFICATION_MESSAGE;
 
 public class NotificationOpener implements OneSignal.NotificationOpenedHandler {
     Context context;
@@ -30,6 +34,13 @@ public class NotificationOpener implements OneSignal.NotificationOpenedHandler {
                 result.notification.payload.toJSONObject().toString());
 
         String x = result.notification.payload.toJSONObject().toString();
+
+        if(x.contains(BROADCAST_NOTIFICATION_MESSAGE)) {
+            Intent intent = new Intent(context, LiveStreamActivity.class).
+                    setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivities(new Intent[]{intent});
+            return;
+        }
 
         int f=0;
         int i=30;

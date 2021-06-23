@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="myText" type="id"/>
+    <item name="myText2" type="id"/>
+    <item name="myFrame" type="id"/>
+    <item name="myView" type="id"/>
+    <item name="view" type="id"/>
+    <item name="parentLayout" type="id"/>
+    <item name="constraintLayout" type="id"/>
+</resources>

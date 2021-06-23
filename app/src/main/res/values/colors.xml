@@ -34,4 +34,5 @@
     <color name="ColorYellow">#FA9107</color>
     <color name="colorGrey">#B9B9B9</color>
     <color name="unknownYellow">#FFB504</color>
+    <color name="AdminName">@android:color/holo_orange_dark</color>
 </resources>
